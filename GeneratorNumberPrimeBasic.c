@@ -3,7 +3,7 @@
 #include "bool.h"
 #include "LinkedList.h"
 
-inline bool isPrime(unsigned long n){
+inline bool isPrime(unsigned long n){ 
 
     // O MENOR NUMERO PRIMO É 2, LOGO SE n FOR MENOR QUE 2 n NÃO É PRIMO
     if(n < 2) return FALSE;
