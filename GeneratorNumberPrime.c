@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include "GeneratorNumberPrime.h"
 
+
 void *GeneratorNumberPrime ( unsigned long lowerLimit, unsigned long topLimit ) {
 
     printf("\n");
