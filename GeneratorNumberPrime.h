@@ -3,7 +3,6 @@
 #define TRUE 1
 #define FALSE 0
 
-
 // FUNÇÃO QUE GERA NUMEROS PRIMOS ENTRE UM INTERVALO
 void *GeneratorNumberPrime ( unsigned long, unsigned long );
 
