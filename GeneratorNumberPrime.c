@@ -6,7 +6,7 @@
 #include "GeneratorNumberPrimeThread.h"
 #include "GeneratorNumberPrimeBasic.h"
 
-void GeneratorNumberPrime ( unsigned long lowerLimit, unsigned long topLimit, Options op )  {
+void GeneratorNumberPrime ( unsigned long lowerLimit, unsigned long topLimit, Options op ) {
 
     switch (op)
     {
