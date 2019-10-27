@@ -4,7 +4,33 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+
 #define nThreads 4
+
+#define handle_error(msg) \
+    do { perror(msg); exit(EXIT_FAILURE); } while (0)
+
+#define handle_error_en(en, msg) \
+        do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
+
+static void pclock(char *msg, clockid_t cid)
+{
+    struct timespec ts;
+
+    printf("%s", msg);
+    if (clock_gettime(cid, &ts) == -1)
+        handle_error("clock_gettime");
+    printf("%4ld.%03ld\n", ts.tv_sec, ts.tv_nsec / 1000000);
+}
+
+static void *
+thread_start(void *arg)
+{
+    printf("Subthread starting infinite loop\n");
+    for (;;)
+        continue;
+}
 
 // LIMITE INFERIOR E SUPERIOR
 typedef struct {
@@ -47,16 +73,20 @@ bool isPrime(unsigned long n){
 }
 
 void* run(void* arguments) {
+
     Args *args = (Args*) arguments;
     Limits *limits = args->limits;
     LinkedList *list = args->list;
 
     // GERA NUMEROS PRIMOS ENTRE LIMITE INFERIOR E LIMITE SUPERIOR
     for(unsigned long i = limits->lowerLimit; i <= limits->topLimit; i++){
+
         // SE É PRIMO INSERE NA LISTA
         if(isPrime(i))
             lstInsert(list, i);
-    }
+    }    
+   
+    pclock("Subthread CPU time: 1    ", 3);
 }
 
 void GeneratorNumberPrimeThread ( unsigned long lowerLimit, unsigned long topLimit ) {

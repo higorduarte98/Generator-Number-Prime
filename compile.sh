@@ -1,1 +1,1 @@
-gcc -o gnp main.c GeneratorNumberPrime.c GeneratorNumberPrimeBasic.c GeneratorNumberPrimeFork.c GeneratorNumberPrimeThread.c LinkedList.c -lpthread -lm
+gcc -o gnp main.c GeneratorNumberPrime.c GeneratorNumberPrimeBasic.c GeneratorNumberPrimeFork.c GeneratorNumberPrimeThread.c LinkedList.c -lpthread -lm -lrt
