@@ -15,7 +15,6 @@ typedef struct {
 
 // VERIFICA SE É PRIMO
 
-
  inline bool isPrime(unsigned long n){
 
     // O MENOR NUMERO PRIMO É 2, LOGO SE n FOR MENOR QUE 2 n NÃO É PRIMO
