@@ -1,3 +1,7 @@
+Este projeto escrito em linguagem C, implementa diferentes versões de um algoritmo para gerar numeros primos entre um intervalo.
+Existem implementações com threads, fork e sem threads e fork.
+
+
 ## Compilação
 
 Para compiilar siga os passos abaixo:
