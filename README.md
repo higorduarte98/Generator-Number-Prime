@@ -1,5 +1,7 @@
 Este projeto escrito em linguagem C, implementa diferentes versões de um algoritmo para gerar numeros primos entre um intervalo.
 Existem implementações com threads, fork e sem threads e fork.
+A implementação com thread usa por padrão 4 threads. 
+O numero de threads pode ser alterado na diretiva #define nThreads no arquvivo GeneratorNumberPrimeThread.c
 
 
 ## Compilação
