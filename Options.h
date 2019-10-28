@@ -2,9 +2,9 @@
 #define Options_h
 
 typedef enum {
-    BASIC_MODE,
-    THREAD_MODE,
-    FORK_MODE
+    BASIC_OPTION,
+    THREAD_OPTION,
+    FORK_OPTION
 }Options;
 
 #endif

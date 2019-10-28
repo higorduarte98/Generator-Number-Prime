@@ -6,21 +6,41 @@
 #include "GeneratorNumberPrimeThread.h"
 #include "GeneratorNumberPrimeBasic.h"
 
-void GeneratorNumberPrime ( unsigned long lowerLimit, unsigned long topLimit, Options op ) {
+void GeneratorNumberPrime ( unsigned long lowerLimit, unsigned long topLimit, Options op, Mode mode ) {
 
-    switch (op)
-    {
-        case BASIC_MODE:
-            GeneratorNumberPrimeBasic(lowerLimit, topLimit);
-            break;
-        case THREAD_MODE:
-            GeneratorNumberPrimeThread(lowerLimit, topLimit);
-            break;
-        case FORK_MODE:
-            GeneratorNumberPrimeFork(lowerLimit, topLimit);
-            break;    
-        default:
-            break;
+    if(mode == NORMAL_MODE){
+        switch (op)
+        {
+            case BASIC_OPTION:
+                GeneratorNumberPrimeBasic(lowerLimit, topLimit);
+                break;
+            case THREAD_OPTION:
+                GeneratorNumberPrimeThread(lowerLimit, topLimit);
+                break;
+            case FORK_OPTION:
+                GeneratorNumberPrimeFork(lowerLimit, topLimit);
+                break;    
+            default:
+                break;
+        }
     }
+    else if(mode == ANALYSE_MODE)
+    {
+        switch (op)
+        {
+            case BASIC_OPTION:
+                GeneratorNumberPrimeBasicAnalyse(lowerLimit, topLimit);
+                break;
+            case THREAD_OPTION:
+                GeneratorNumberPrimeThreadAnalyse(lowerLimit, topLimit);
+                break;
+            case FORK_OPTION:
+                GeneratorNumberPrimeForkAnalyse(lowerLimit, topLimit);
+                break;    
+            default:
+                break;
+        }
+    }
+    
     
 }

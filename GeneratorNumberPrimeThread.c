@@ -8,30 +8,6 @@
 
 #define nThreads 4
 
-#define handle_error(msg) \
-    do { perror(msg); exit(EXIT_FAILURE); } while (0)
-
-#define handle_error_en(en, msg) \
-        do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
-
-static void pclock(char *msg, clockid_t cid)
-{
-    struct timespec ts;
-
-    printf("%s", msg);
-    if (clock_gettime(cid, &ts) == -1)
-        handle_error("clock_gettime");
-    printf("%4ld.%03ld\n", ts.tv_sec, ts.tv_nsec / 1000000);
-}
-
-static void *
-thread_start(void *arg)
-{
-    printf("Subthread starting infinite loop\n");
-    for (;;)
-        continue;
-}
-
 // LIMITE INFERIOR E SUPERIOR
 typedef struct {
     unsigned int lowerLimit;
@@ -44,6 +20,7 @@ typedef struct {
     LinkedList *list;
 }Args;
 
+// VERIFICA SE É PRIMO
 bool isPrime(unsigned long n){
 
     // O MENOR NUMERO PRIMO É 2, LOGO SE n FOR MENOR QUE 2 n NÃO É PRIMO
@@ -72,8 +49,8 @@ bool isPrime(unsigned long n){
     return TRUE;
 }
 
+// METODO EXECUTADO PELA THREAD
 void* run(void* arguments) {
-
     Args *args = (Args*) arguments;
     Limits *limits = args->limits;
     LinkedList *list = args->list;
@@ -84,9 +61,7 @@ void* run(void* arguments) {
         // SE É PRIMO INSERE NA LISTA
         if(isPrime(i))
             lstInsert(list, i);
-    }    
-   
-    pclock("Subthread CPU time: 1    ", 3);
+    }
 }
 
 void GeneratorNumberPrimeThread ( unsigned long lowerLimit, unsigned long topLimit ) {
@@ -125,10 +100,84 @@ void GeneratorNumberPrimeThread ( unsigned long lowerLimit, unsigned long topLim
 
     printf("\n");
 
-    //LIBERA ARGUMENTOS
+    //LIBERA ARGUMENTOS DAS THREADS
     for(int i = 0; i < nThreads; i++){
         lstFree(args[i].list);
         free(args[i].limits);
     }
+}
 
+// METODO EXECUTADO PELA THREAD COM ANALISE
+void* runAnalyse(void* arguments) {
+    Args *args = (Args*) arguments;
+    Limits *limits = args->limits;
+    LinkedList *list = args->list;
+
+    //CALCULA TEMPO GASTO POR CADA THREAD
+    struct timespec start, finish;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    // GERA NUMEROS PRIMOS ENTRE LIMITE INFERIOR E LIMITE SUPERIOR
+    for(unsigned long i = limits->lowerLimit; i <= limits->topLimit; i++){
+
+        // SE É PRIMO INSERE NA LISTA
+        if(isPrime(i))
+            lstInsert(list, i);
+    }
+
+    //IMPRIMI TEMPO GASTO
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+    long seconds = finish.tv_sec - start.tv_sec; 
+    long ns = finish.tv_nsec - start.tv_nsec; 
+    
+    printf("Tempo gasto pela thread: %.2lf s\n", (double)seconds + (double)ns/(double)1000000000); 
+}
+
+void GeneratorNumberPrimeThreadAnalyse ( unsigned long lowerLimit, unsigned long topLimit ){
+
+    // DECLARANDO ARGUMENTOS DAS THREADS
+    Args args[nThreads];
+
+    // CRIANDO ARGUMENTOS PARA THREADS
+    for(int i = 0; i < nThreads; i++){
+
+        // ALOCA ESPAÇO PARA LIMITS E CRIA A LISTA
+        args[i].limits = malloc(sizeof(Limits));
+        args[i].list = lstCreate();
+
+        // SETA VALORES DE LIMITES INFERIOR E SUPERIOR
+        args[i].limits->lowerLimit = (i) * ( topLimit - lowerLimit ) / nThreads + lowerLimit + (i!=0);
+        args[i].limits->topLimit = (i+1) * ( topLimit - lowerLimit ) / nThreads + lowerLimit;            
+    }
+
+    // DECLARANDO THREADS
+    pthread_t pthreads[nThreads];
+    
+    // MEDINDO TEMPO TOTAL DAS THREADS
+    struct timespec start, finish;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    // CRIANDO THREADS
+    for(int i = 0; i < nThreads; i++){
+        pthread_create(&pthreads[i], NULL, runAnalyse, &args[i]);
+    }
+
+    // AGUARDA AS THREADS TERMINAREM
+    for(int i = 0; i < nThreads; i++){
+        pthread_join(pthreads[i], NULL);
+    }
+
+    //IMPRIMI TEMPO GASTO
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+
+    long seconds = finish.tv_sec - start.tv_sec; 
+    long ns = finish.tv_nsec - start.tv_nsec; 
+    
+    printf("Tempo total: %.2lf s\n", (double)seconds + (double)ns/(double)1000000000); 
+
+    //LIBERA ARGUMENTOS DAS THREADS
+    for(int i = 0; i < nThreads; i++){
+        lstFree(args[i].list);
+        free(args[i].limits);
+    }
 }

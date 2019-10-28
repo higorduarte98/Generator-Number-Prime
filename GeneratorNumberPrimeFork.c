@@ -3,9 +3,8 @@
 #include "LinkedList.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <time.h>
+#include <unistd.h>
 
 // LIMITE INFERIOR E SUPERIOR
 typedef struct {
@@ -14,7 +13,6 @@ typedef struct {
 }Limits;
 
 // VERIFICA SE É PRIMO
-
 
  inline bool isPrime(unsigned long n){
 
@@ -44,19 +42,6 @@ typedef struct {
     return TRUE;
 }
 
-void WriteFile(unsigned long prime, short nFile){
-    FILE *file;
-
-    if((file = fopen("1", "a+")) == NULL){
-        printf("\nERRO AO ABRIR ARQUIVO!\n");
-        exit(1);
-    }
-
-    fwrite(&prime, sizeof(short), sizeof(prime), file);
-
-    fclose(file);
-}
-
 void GeneratorNumberPrimeFork ( unsigned long lowerLimit, unsigned long topLimit ) {
     
     // PID
@@ -73,6 +58,10 @@ void GeneratorNumberPrimeFork ( unsigned long lowerLimit, unsigned long topLimit
     // PROCESSO FILHO
     if (pid == 0)
     {
+
+        // MEDINDO TEMPO
+        clock_t t = clock();
+
         // GERA NUMEROS PRIMOS ENTRE LIMITE INFERIOR E LIMITE SUPERIOR
         for(unsigned long i = lowerLimit; i <= topLimit/2; i++){
 
@@ -80,6 +69,8 @@ void GeneratorNumberPrimeFork ( unsigned long lowerLimit, unsigned long topLimit
             if(isPrime(i))
                 lstInsert(list, i);
         }
+
+        printf("%lf", (clock() - t) / (double) CLOCKS_PER_SEC);
     }
 
     // PROCESSO PAI
@@ -108,5 +99,65 @@ void GeneratorNumberPrimeFork ( unsigned long lowerLimit, unsigned long topLimit
     
 }
 
+void GeneratorNumberPrimeForkAnalyse ( unsigned long lowerLimit, unsigned long topLimit ){
+    // PID
+    pid_t pid;
+    struct timespec start, finish;
+    LinkedList * list = lstCreate();
 
+    if ((pid = fork()) < 0)
+    {
+        perror("fork");
+        exit(1);
+    }
 
+    // PROCESSO FILHO
+    if (pid == 0)
+    {
+        // MEDINDO TEMPO DO PROCESSO
+        clock_gettime(CLOCK_MONOTONIC, &start);
+
+        // GERA NUMEROS PRIMOS ENTRE LIMITE INFERIOR E LIMITE SUPERIOR
+        for(unsigned long i = lowerLimit; i <= topLimit/2; i++){
+
+            // SE É PRIMO INSERE NA LISTA
+            if(isPrime(i))
+                lstInsert(list, i);
+        }
+
+        //IMPRIMI TEMPO GASTO PELO PROCESSO PAI
+        clock_gettime(CLOCK_MONOTONIC, &finish);
+
+        long seconds = finish.tv_sec - start.tv_sec; 
+        long ns = finish.tv_nsec - start.tv_nsec; 
+        
+        printf("Tempo do processo filho: %.2lf s\n", (double)seconds + (double)ns/(double)1000000000); 
+    }
+
+    // PROCESSO PAI
+    else
+    {
+        // MEDINDO TEMPO TOTAL DAS THREADS
+        clock_gettime(CLOCK_MONOTONIC, &start);
+
+         // GERA NUMEROS PRIMOS ENTRE LIMITE INFERIOR E LIMITE SUPERIOR
+        for(unsigned long i = ( topLimit - lowerLimit ) / 2 + lowerLimit + 1; i <= topLimit; i++){
+
+            // SE É PRIMO INSERE NA LISTA
+            if(isPrime(i))
+                lstInsert(list, i);
+        }
+
+        //IMPRIMI TEMPO GASTO PELO PROCESSO PAI
+        clock_gettime(CLOCK_MONOTONIC, &finish);
+
+        long seconds = finish.tv_sec - start.tv_sec; 
+        long ns = finish.tv_nsec - start.tv_nsec; 
+        
+        printf("Tempo do processo pai: %.2lf s\n", (double)seconds + (double)ns/(double)1000000000); 
+
+    }
+
+    //LIBERA LISTA
+    lstFree(list);
+}

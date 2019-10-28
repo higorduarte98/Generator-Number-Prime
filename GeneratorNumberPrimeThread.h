@@ -1,7 +1,7 @@
 #ifndef GeneratorNumberPrimeThread_h
 #define GeneratorNumberPrimeThread_h
 
-//VERSÃO THREAD
-void GeneratorNumberPrimeThread ( unsigned long lowerLimit, unsigned long topLimit );
+void GeneratorNumberPrimeThread ( unsigned long, unsigned long );
+void GeneratorNumberPrimeThreadAnalyse ( unsigned long, unsigned long );
 
 #endif

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 #include "GeneratorNumberPrimeBasic.h"
 #include "bool.h"
 #include "LinkedList.h"
@@ -11,7 +12,7 @@ inline bool isPrime(unsigned long n){
     // n = 2 É PRIMO
     if(n == 2) return TRUE;
 
-    // SE n É PAR ENTÃO n NÃO É PRIMO
+    // SE n É PAR E DIFERENTE DE 2 ENTÃO n NÃO É PRIMO
     if(n % 2 == 0)
         return FALSE;
 
@@ -43,4 +44,26 @@ void GeneratorNumberPrimeBasic ( unsigned long lowerLimit, unsigned long topLimi
 
     lstPrint(list);
     printf("\n");
+}
+
+void GeneratorNumberPrimeBasicAnalyse ( unsigned long lowerLimit, unsigned long topLimit){
+    LinkedList *list = lstCreate();    
+
+    // MEDINDO TEMPO TOTAL DAS THREADS
+    struct timespec start, finish;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    // GERA NUMEROS PRIMOS ENTRE LIMITE INFERIOR E LIMITE SUPERIOR
+    for(unsigned long i = lowerLimit; i <= topLimit; i++){
+        if(isPrime(i))
+            lstInsert(list, i);
+    }
+
+    //IMPRIMI TEMPO GASTO
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+
+    long seconds = finish.tv_sec - start.tv_sec; 
+    long ns = finish.tv_nsec - start.tv_nsec; 
+    
+    printf("Tempo total: %.2lf s\n", (double)seconds + (double)ns/(double)1000000000); 
 }
