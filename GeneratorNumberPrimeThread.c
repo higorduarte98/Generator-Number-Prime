@@ -5,13 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+    
 #define nThreads 4
 
 // LIMITE INFERIOR E SUPERIOR
 typedef struct {
-    unsigned int lowerLimit;
-    unsigned int topLimit;
+    unsigned long lowerLimit;
+    unsigned long topLimit;
 }Limits;
 
 // ARGUMENTOS QUE SERÃO PASSADOS PARA AS THREADS
@@ -41,9 +41,7 @@ bool isPrime(unsigned long n){
     // SE n É DIVISIVEL POR UM NUMERO IMPAR ENTRE 3 E raiz(n) 
     
     for(unsigned long i = 3; i*i <= n; i = i + 2){
-        if(n % i == 0) {
-            return FALSE;
-        }
+        if(n % i == 0) return FALSE;
     }
 
     return TRUE;

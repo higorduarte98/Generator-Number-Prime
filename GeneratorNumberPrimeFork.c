@@ -34,9 +34,7 @@ typedef struct {
     // SE n É DIVISIVEL POR UM NUMERO IMPAR ENTRE 3 E raiz(n) 
     
     for(unsigned long i = 3; i*i <= n; i = i+2){
-        if(n % i == 0) {
-            return FALSE;
-        }
+        if(n % i == 0) return FALSE;
     }
 
     return TRUE;
